@@ -16,7 +16,7 @@ resource "azurerm_cognitive_account" "AllAzureAIServices" {
   name                = can(each.value.name) ? each.value.name : each.key
   location            = each.value.location
   resource_group_name = each.value.resource_group_name
-  kind                = each.value.kind
+  kind                = lookup(each.value, "kind", null)
   sku_name            = each.value.sku_name
   tags                = contains(keys(each.value), "tags") ? merge(local.DefaultTags, each.value.tags) : local.DefaultTags
 }
