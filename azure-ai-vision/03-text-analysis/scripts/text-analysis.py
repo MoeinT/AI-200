@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 
 
 # Class definition
-class AzureImageAnalyzer:
+class AzureTextAnalyzer:
     def __init__(self, ai_endpoint, ai_key, image_path: str):
         self.client = ImageAnalysisClient(
             endpoint=ai_endpoint, credential=AzureKeyCredential(ai_key)
