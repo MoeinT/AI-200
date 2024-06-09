@@ -1,8 +1,8 @@
 import configparser
+import logging
 import os
 
 from azure.ai.textanalytics import TextAnalyticsClient
-
 # import namespaces
 from azure.core.credentials import AzureKeyCredential
 
@@ -23,14 +23,23 @@ class AzureTextAnalyzer:
         credential = AzureKeyCredential(ai_key)
         return cls(ai_endpoint=ai_endpoint, credential=credential)
 
+    def _handle_error(self, method_name, ex):
+        logging.error(f"An error occurred in '{method_name}': {ex}")
+        return []
+
     def detect_language(self, text: str) -> str:
-        detectedLanguage = self.ai_client.detect_language(documents=[text])[0]
-        return detectedLanguage.primary_language.name
+        try:
+            response = self.ai_client.detect_language(documents=[text])[0]
+            return response.primary_language.name
+        except Exception as ex:
+            return self._handle_error("detect_language", ex)
 
     def detect_sentiment(self, text: str):
-        # Get sentiment
-        sentimentAnalysis = self.ai_client.analyze_sentiment(documents=[text])[0]
-        return sentimentAnalysis.sentiment
+        try:
+            response = self.ai_client.analyze_sentiment(documents=[text])[0]
+            return response.sentiment
+        except Exception as ex:
+            return self._handle_error("detect_sentiment", ex)
 
     def detect_key_phrases(self, text: str):
         try:
@@ -45,7 +54,7 @@ class AzureTextAnalyzer:
             return l_key_phrases
         except Exception as ex:
             print(ex)
-            return []
+            return self._handle_error("detect_key_phrases", ex)
 
     def detect_entities(self, text: str):
         try:
@@ -57,21 +66,21 @@ class AzureTextAnalyzer:
                     dict_entities[entity.text] = entity.category
                 return dict_entities
         except Exception as ex:
-            print(ex)
-            return {}
+            return self._handle_error("detect_entities", ex)
 
     def detect_linked_entities(self, text: str):
         # Get linked entities
         try:
-            entities = self.ai_client.recognize_linked_entities(documents=[text])[0].entities
+            entities = self.ai_client.recognize_linked_entities(documents=[text])[
+                0
+            ].entities
             if len(entities) > 0:
                 dict_entities = {}
                 for linked_entity in entities:
                     dict_entities[linked_entity.name] = linked_entity.url
                 return dict_entities
         except Exception as ex:
-            print(ex)
-            return {}
+            return self._handle_error("detect_linked_entities", ex)
 
 
 if __name__ == "__main__":
