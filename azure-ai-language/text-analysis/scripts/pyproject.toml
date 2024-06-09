@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "scripts"
+version = "0.1.0"
+description = ""
+authors = ["MoeinT <moin.torabi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+configparser = "^7.0.0"
+azure-ai-vision-imageanalysis = "^1.0.0b2"
+isort = "^5.13.2"
+black = "^24.4.2"
+matplotlib = "^3.9.0"
+azure-ai-textanalytics = "^5.3.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
